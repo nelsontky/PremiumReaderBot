@@ -7,7 +7,9 @@ const puppeteer = require("puppeteer");
 const supportedSites = require("./supportedSites");
 const urlTools = require("./utils/urlTools");
 const helpMessage = require("./utils/helpMessage");
+
 const googleSearchHandler = require("./siteHandler/googleSearchHandler");
+const straitsTimesHandler = require("./siteHandler/straitsTimesHandler");
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
@@ -28,7 +30,6 @@ bot.hears(/read (.+)/, async ctx => {
     const domain = urlTools.getDomain(url);
 
     if (!supportedSites.includes(domain)) {
-      // Check if site is supported
       ctx.reply("Website not supported");
       ctx.reply(helpMessage);
       return;
@@ -39,24 +40,48 @@ bot.hears(/read (.+)/, async ctx => {
       Extra.inReplyTo(ctx.update.message.message_id)
     );
 
-    // Add job to queue
-    jobQueue.push(cb => {
-      googleSearchHandler(url, domain)
-        .then(() =>
-          ctx.replyWithDocument(
-            { source: "article.pdf" },
-            Extra.inReplyTo(ctx.update.message.message_id)
-          )
-        )
-        .then(() => cb())
-        .catch(e => {
-          ctx.replyWithMarkdown(
-            `Error, please try again. \nDetails: \n\`\`\`${e}\`\`\``,
-            Extra.inReplyTo(ctx.update.message.message_id)
-          );
-          ctx.reply(helpMessage);
+    switch (domain) {
+      case "wsj.com":
+      case "ft.com":
+        jobQueue.push(cb => {
+          googleSearchHandler(url, domain)
+            .then(() =>
+              ctx.replyWithDocument(
+                { source: "article.pdf" },
+                Extra.inReplyTo(ctx.update.message.message_id)
+              )
+            )
+            .then(() => cb())
+            .catch(e => {
+              ctx.replyWithMarkdown(
+                `Error, please try again. \nDetails: \n\`\`\`${e}\`\`\``,
+                Extra.inReplyTo(ctx.update.message.message_id)
+              );
+              ctx.reply(helpMessage);
+            });
         });
-    });
+        break;
+
+      case "straitstimes.com":
+        jobQueue.push(cb => {
+          straitsTimesHandler(url)
+            .then(() =>
+              ctx.replyWithDocument(
+                { source: "article.pdf" },
+                Extra.inReplyTo(ctx.update.message.message_id)
+              )
+            )
+            .then(() => cb())
+            .catch(e => {
+              ctx.replyWithMarkdown(
+                `Error, please try again. \nDetails: \n\`\`\`${e}\`\`\``,
+                Extra.inReplyTo(ctx.update.message.message_id)
+              );
+              ctx.reply(helpMessage);
+            });
+        });
+        break;
+    }
   }
 });
 
