@@ -1,0 +1,25 @@
+{
+  "name": "premiumreaderbot",
+  "version": "1.0.0",
+  "description": "Telegram bot for reading premium articles",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nelsontky/PremiumReaderBot.git"
+  },
+  "author": "nelsontky",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nelsontky/PremiumReaderBot/issues"
+  },
+  "homepage": "https://github.com/nelsontky/PremiumReaderBot#readme",
+  "dependencies": {
+    "dotenv": "^8.1.0",
+    "puppeteer": "^1.19.0",
+    "queue": "^6.0.1",
+    "telegraf": "^3.32.0"
+  }
+}

@@ -59,3 +59,13 @@ typings/
 
 # next.js build output
 .next
+
+# vim temp files
+*.swp
+*.swo
+*~
+
+.env
+
+# credentials directory
+creds/
