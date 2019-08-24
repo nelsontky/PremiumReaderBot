@@ -4,6 +4,7 @@ const Telegraf = require("telegraf");
 const queue = require("queue");
 const puppeteer = require("puppeteer");
 const urlTools = require("./utils/urlTools");
+const googleSearchHandler = require("./siteHandler/googleSearchHandler");
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
@@ -20,20 +21,11 @@ bot.hears(/read (.+)/, async ctx => {
     ctx.reply("Input is not a URL!");
   } else {
     const domain = urlTools.getDomain(url);
-    ctx.reply(domain);
-  }
-});
 
-bot.command("test", ctx => {
-  ctx.reply("Loading...");
-  jobQueue.push(cb => {
-    puppeteer.launch({ headless: false }).then(browser =>
-      setTimeout(() => {
-        browser.close();
-        cb();
-      }, 5000)
-    );
-  });
+    jobQueue.push(cb => {
+      googleSearchHandler(url, ctx).then(() => cb());
+    });
+  }
 });
 
 bot.launch();
