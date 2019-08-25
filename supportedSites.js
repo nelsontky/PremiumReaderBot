@@ -4,7 +4,6 @@ let sites = [
   "wsj.com",
   "baltimoresun.com",
   "bostonglobe.com",
-  "washingtonpost.com",
   "businessinsider.com",
   "businessinsider.sg",
   "chicagotribune.com",
