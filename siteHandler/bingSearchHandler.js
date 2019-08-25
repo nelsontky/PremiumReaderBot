@@ -20,10 +20,12 @@ async function bingSearchHandler(url, domain) {
     await page.goto(`https://www.bing.com/search?q=${url}`);
     await page.waitForSelector(FIRST_LINK);
     await page.click(FIRST_LINK);
-    await page.waitFor("header");
+    await page.waitFor("title");
 
     // Domain specific hacks
     if (domain === "ft.com") {
+      await page.waitFor(".cookie-banner");
+
       // Removes cookies prompt
       await page.evaluate(sel => {
         let elements = document.querySelectorAll(sel);

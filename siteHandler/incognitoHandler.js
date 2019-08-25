@@ -8,15 +8,15 @@ async function incognitoHandler(url, domain) {
   });
 
   const page = await browser.newPage();
-  await page.setJavaScriptEnabled(false);
 
   try {
     await page.setUserAgent(
       "Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1"
     );
 
+    // Set JavaScript on for sites that need it
     switch (domain) {
-      case "economist.com":
+      case "washingtonpost.com":
         break;
 
       default:
@@ -43,6 +43,15 @@ async function incognitoHandler(url, domain) {
         let topBar = document.querySelector(sel);
         topBar.parentNode.removeChild(topBar);
       }, "#wp-header");
+
+      await page.waitForSelector("body > div:nth-child(20)");
+      // Remove ad bar
+      await page.evaluate(sel => {
+        let elements = document.querySelectorAll(sel);
+        for (let i = 0; i < elements.length; i++) {
+          elements[i].parentNode.removeChild(elements[i]);
+        }
+      }, "body > div:nth-child(20)");
     } else if (domain === "bostonglobe.com") {
       // Remove top bar
       await page.evaluate(sel => {

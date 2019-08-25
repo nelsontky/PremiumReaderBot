@@ -20,15 +20,17 @@ async function duckDuckGoSearchHandler(url, domain) {
     await page.goto(`https://duckduckgo.com/html?q=${url}&k1=-1&kl=us-en`);
     await page.waitForSelector(FIRST_LINK);
     await page.click(FIRST_LINK);
-    await page.waitFor("#full-header");
+    await page.waitFor("title");
 
     // Domain specific hacks
     if (domain === "wsj.com") {
+      await page.waitFor("#slimline-header > div > div");
+
       // Removes WSJ top bar
       await page.evaluate(sel => {
         let topBar = document.querySelector(sel);
         topBar.parentNode.removeChild(topBar);
-      }, "#full-header");
+      }, "#slimline-header > div > div");
     }
 
     await page.emulateMedia("screen");
