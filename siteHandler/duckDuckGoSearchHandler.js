@@ -24,15 +24,13 @@ async function duckDuckGoSearchHandler(url, domain) {
 
     // Domain specific hacks
     if (domain === "wsj.com") {
-      await page.waitFor("#article_body > div.sliderBox > div:nth-child(1)");
+      await page.waitFor("#full-header");
 
       // Removes WSJ top bar
       await page.evaluate(sel => {
-        let elements = document.querySelectorAll(sel);
-        for (let i = 0; i < elements.length; i++) {
-          elements[i].parentNode.removeChild(elements[i]);
-        }
-      }, ".zonedModule");
+        let topBar = document.querySelector(sel);
+        topBar.parentNode.removeChild(topBar);
+      }, "#full-header");
     }
 
     await page.emulateMedia("screen");
