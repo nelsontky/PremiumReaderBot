@@ -33,17 +33,13 @@ async function straitsTimesHandler(url) {
     await page.waitFor(1000);
 
     const page2 = await browser.newPage();
-
     await page2.goto(url);
-    // Wait for head to appear to confirm loading
     await page2.waitForSelector("title");
     await page2.waitFor(1000);
     // Disable Javascript so weird overlays can't be created
     await page2.setJavaScriptEnabled(false);
     await page2.reload();
-
     await page2.waitForSelector("title");
-
     await page2.emulateMedia("screen");
 
     await page2.pdf({ path: "article.pdf", width: 414, height: 736 });

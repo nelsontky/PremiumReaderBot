@@ -34,6 +34,7 @@ let jobQueue = queue();
 jobQueue.autostart = true;
 jobQueue.concurrency = 1;
 
+bot.command("start", ctx => ctx.reply(helpMessage));
 bot.command("help", ctx => ctx.reply(helpMessage));
 
 bot.hears(/read (.+)/, async ctx => {
@@ -66,7 +67,7 @@ bot.hears(/read (.+)/, async ctx => {
             .catch(e => handleError(ctx, e));
         });
         break;
-        
+
       case "ft.com":
         jobQueue.push(cb => {
           bingSearchHandler(url, domain)
