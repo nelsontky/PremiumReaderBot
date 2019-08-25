@@ -42,10 +42,10 @@ async function straitsTimesHandler(url) {
     await page2.waitForSelector("title");
 
     // Remove up arrow
-    await page.evaluate(sel => {
-      let arrowUp = document.querySelector(sel);
-      arrowUp.parentNode.removeChild(arrorUp);
-    }, ".visible-xs");
+    await page2.evaluate(sel => {
+      let arrow = document.querySelector(sel);
+      arrow.parentNode.removeChild(arrow);
+    }, ".back-to-top");
 
     await page2.emulateMedia("screen");
 
