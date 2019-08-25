@@ -11,6 +11,7 @@ const helpMessage = require("./utils/helpMessage");
 const duckDuckGoSearchHandler = require("./siteHandler/duckDuckGoSearchHandler");
 const bingSearchHandler = require("./siteHandler/bingSearchHandler");
 const straitsTimesHandler = require("./siteHandler/straitsTimesHandler");
+const incognitoHandler = require("./siteHandler/incognitoHandler");
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
@@ -80,6 +81,15 @@ bot.hears(/read (.+)/, async ctx => {
       case "straitstimes.com":
         jobQueue.push(cb => {
           straitsTimesHandler(url)
+            .then(() => sendArticle(ctx))
+            .then(() => cb())
+            .catch(e => handleError(ctx, e));
+        });
+        break;
+
+      default:
+        jobQueue.push(cb => {
+          incognitoHandler(url, domain)
             .then(() => sendArticle(ctx))
             .then(() => cb())
             .catch(e => handleError(ctx, e));
