@@ -15,12 +15,13 @@ const incognitoHandler = require("./siteHandler/incognitoHandler");
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
-function handleError(ctx, e) {
+function handleError(ctx, e, cb) {
   ctx.replyWithMarkdown(
     `Error, please try again. \nDetails: \n\`\`\`${e}\`\`\``,
     Extra.inReplyTo(ctx.update.message.message_id)
   );
   ctx.reply(helpMessage);
+  cb();
 }
 
 function sendArticle(ctx) {
@@ -65,7 +66,7 @@ bot.hears(/read (.+)/, async ctx => {
           duckDuckGoSearchHandler(url, domain)
             .then(() => sendArticle(ctx))
             .then(() => cb())
-            .catch(e => handleError(ctx, e));
+            .catch(e => handleError(ctx, e, cb));
         });
         break;
 
@@ -74,7 +75,7 @@ bot.hears(/read (.+)/, async ctx => {
           bingSearchHandler(url, domain)
             .then(() => sendArticle(ctx))
             .then(() => cb())
-            .catch(e => handleError(ctx, e));
+            .catch(e => handleError(ctx, e, cb));
         });
         break;
 
@@ -83,7 +84,7 @@ bot.hears(/read (.+)/, async ctx => {
           straitsTimesHandler(url)
             .then(() => sendArticle(ctx))
             .then(() => cb())
-            .catch(e => handleError(ctx, e));
+            .catch(e => handleError(ctx, e, cb));
         });
         break;
 
@@ -92,7 +93,7 @@ bot.hears(/read (.+)/, async ctx => {
           incognitoHandler(url, domain)
             .then(() => sendArticle(ctx))
             .then(() => cb())
-            .catch(e => handleError(ctx, e));
+            .catch(e => handleError(ctx, e, cb));
         });
         break;
     }

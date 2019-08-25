@@ -38,20 +38,13 @@ async function incognitoHandler(url, domain) {
         }
       }, ".trb_ad_st_m");
     } else if (domain === "washingtonpost.com") {
+      await page.setJavaScriptEnabled(false);
+      await page.reload();
       // Remove top bar
       await page.evaluate(sel => {
         let topBar = document.querySelector(sel);
         topBar.parentNode.removeChild(topBar);
       }, "#wp-header");
-
-      await page.waitForSelector("body > div:nth-child(20)");
-      // Remove ad bar
-      await page.evaluate(sel => {
-        let elements = document.querySelectorAll(sel);
-        for (let i = 0; i < elements.length; i++) {
-          elements[i].parentNode.removeChild(elements[i]);
-        }
-      }, "body > div:nth-child(20)");
     } else if (domain === "bostonglobe.com") {
       // Remove top bar
       await page.evaluate(sel => {
