@@ -9,7 +9,7 @@ const BUTTON_SELECTOR = ".btn";
 
 async function straitsTimesHandler(url) {
   const browser = await puppeteer.launch({
-    headless: false,
+    headless: true,
     defaultViewport: { height: 736, width: 414 },
     args: ["--no-sandbox"]
   });
@@ -52,7 +52,7 @@ async function straitsTimesHandler(url) {
     await page2.pdf({ path: "article.pdf", width: 414, height: 736 });
     browser.close();
   } catch (e) {
-    // browser.close();
+    browser.close();
     throw e;
   }
 }
