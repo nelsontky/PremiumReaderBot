@@ -9,6 +9,7 @@ const urlTools = require("./utils/urlTools");
 const helpMessage = require("./utils/helpMessage");
 
 const duckDuckGoSearchHandler = require("./siteHandler/duckDuckGoSearchHandler");
+const bingSearchHandler = require("./siteHandler/bingSearchHandler");
 const straitsTimesHandler = require("./siteHandler/straitsTimesHandler");
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
@@ -58,9 +59,17 @@ bot.hears(/read (.+)/, async ctx => {
 
     switch (domain) {
       case "wsj.com":
-      case "ft.com":
         jobQueue.push(cb => {
           duckDuckGoSearchHandler(url, domain)
+            .then(() => sendArticle(ctx))
+            .then(() => cb())
+            .catch(e => handleError(ctx, e));
+        });
+        break;
+        
+      case "ft.com":
+        jobQueue.push(cb => {
+          bingSearchHandler(url, domain)
             .then(() => sendArticle(ctx))
             .then(() => cb())
             .catch(e => handleError(ctx, e));
