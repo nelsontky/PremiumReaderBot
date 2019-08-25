@@ -41,7 +41,7 @@ bot.hears(/read (.+)/, async ctx => {
   const url = ctx.match[1];
 
   if (!urlTools.isUrl(url)) {
-    ctx.reply("Input is not a URL!");
+    ctx.reply("Input is not a valid URL!");
     ctx.reply(helpMessage);
   } else {
     const domain = urlTools.getDomain(url);
