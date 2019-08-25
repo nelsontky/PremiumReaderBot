@@ -8,10 +8,25 @@ const supportedSites = require("./supportedSites");
 const urlTools = require("./utils/urlTools");
 const helpMessage = require("./utils/helpMessage");
 
-const googleSearchHandler = require("./siteHandler/googleSearchHandler");
+const duckDuckGoSearchHandler = require("./siteHandler/duckDuckGoSearchHandler");
 const straitsTimesHandler = require("./siteHandler/straitsTimesHandler");
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
+
+function handleError(ctx, e) {
+  ctx.replyWithMarkdown(
+    `Error, please try again. \nDetails: \n\`\`\`${e}\`\`\``,
+    Extra.inReplyTo(ctx.update.message.message_id)
+  );
+  ctx.reply(helpMessage);
+}
+
+function sendArticle(ctx) {
+  ctx.replyWithDocument(
+    { source: "article.pdf" },
+    Extra.inReplyTo(ctx.update.message.message_id)
+  );
+}
 
 // One task executes at once
 let jobQueue = queue();
@@ -35,6 +50,7 @@ bot.hears(/read (.+)/, async ctx => {
       return;
     }
 
+    // Starts processing the job
     ctx.reply(
       "Wait a while ah loading... ...",
       Extra.inReplyTo(ctx.update.message.message_id)
@@ -44,41 +60,19 @@ bot.hears(/read (.+)/, async ctx => {
       case "wsj.com":
       case "ft.com":
         jobQueue.push(cb => {
-          googleSearchHandler(url, domain)
-            .then(() =>
-              ctx.replyWithDocument(
-                { source: "article.pdf" },
-                Extra.inReplyTo(ctx.update.message.message_id)
-              )
-            )
+          duckDuckGoSearchHandler(url, domain)
+            .then(() => sendArticle(ctx))
             .then(() => cb())
-            .catch(e => {
-              ctx.replyWithMarkdown(
-                `Error, please try again. \nDetails: \n\`\`\`${e}\`\`\``,
-                Extra.inReplyTo(ctx.update.message.message_id)
-              );
-              ctx.reply(helpMessage);
-            });
+            .catch(e => handleError(ctx, e));
         });
         break;
 
       case "straitstimes.com":
         jobQueue.push(cb => {
           straitsTimesHandler(url)
-            .then(() =>
-              ctx.replyWithDocument(
-                { source: "article.pdf" },
-                Extra.inReplyTo(ctx.update.message.message_id)
-              )
-            )
+            .then(() => sendArticle(ctx))
             .then(() => cb())
-            .catch(e => {
-              ctx.replyWithMarkdown(
-                `Error, please try again. \nDetails: \n\`\`\`${e}\`\`\``,
-                Extra.inReplyTo(ctx.update.message.message_id)
-              );
-              ctx.reply(helpMessage);
-            });
+            .catch(e => handleError(ctx, e));
         });
         break;
     }
