@@ -30,17 +30,23 @@ async function straitsTimesHandler(url) {
     await page.click(BUTTON_SELECTOR);
 
     await page.waitForNavigation();
+    await page.waitFor(1000);
 
-    await page.goto(url);
+    const page2 = await browser.newPage();
+
+    await page2.goto(url);
     // Wait for head to appear to confirm loading
-    await page.waitForSelector("head");
+    await page2.waitForSelector("title");
+    await page2.waitFor(1000);
     // Disable Javascript so weird overlays can't be created
-    await page.setJavaScriptEnabled(false);
-    await page.reload();
+    await page2.setJavaScriptEnabled(false);
+    await page2.reload();
 
-    await page.emulateMedia("screen");
+    await page2.waitForSelector("title");
 
-    await page.pdf({ path: "article.pdf", width: 414, height: 736 });
+    await page2.emulateMedia("screen");
+
+    await page2.pdf({ path: "article.pdf", width: 414, height: 736 });
     browser.close();
   } catch (e) {
     browser.close();
