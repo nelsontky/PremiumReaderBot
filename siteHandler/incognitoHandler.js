@@ -8,7 +8,6 @@ async function incognitoHandler(url, domain) {
   });
 
   const page = await browser.newPage();
-
   await page.setJavaScriptEnabled(false);
 
   try {
@@ -16,7 +15,14 @@ async function incognitoHandler(url, domain) {
       "Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1"
     );
 
-    await page.setJavaScriptEnabled(false);
+    switch (domain) {
+      case "economist.com":
+        break;
+
+      default:
+        await page.setJavaScriptEnabled(false);
+        break;
+    }
 
     await page.goto(`${url}`);
     await page.waitFor("title");
@@ -31,21 +37,18 @@ async function incognitoHandler(url, domain) {
           elements[i].parentNode.removeChild(elements[i]);
         }
       }, ".trb_ad_st_m");
-
     } else if (domain === "washingtonpost.com") {
       // Remove top bar
       await page.evaluate(sel => {
         let topBar = document.querySelector(sel);
         topBar.parentNode.removeChild(topBar);
       }, "#wp-header");
-
     } else if (domain === "bostonglobe.com") {
       // Remove top bar
       await page.evaluate(sel => {
         let topBar = document.querySelector(sel);
         topBar.parentNode.removeChild(topBar);
       }, "#app-bar");
-
     } else if (domain === "chicagotribune.com") {
       // Removes ad bar
       await page.evaluate(sel => {
@@ -54,7 +57,6 @@ async function incognitoHandler(url, domain) {
           elements[i].parentNode.removeChild(elements[i]);
         }
       }, ".pb-ad");
-
     } else if (domain === "economist.com") {
       // Remove top bar
       await page.evaluate(sel => {
@@ -64,6 +66,12 @@ async function incognitoHandler(url, domain) {
         }
       }, ".sticky-outer-wrapper");
 
+      await page.evaluate(sel => {
+        let elements = document.querySelectorAll(sel);
+        for (let i = 0; i < elements.length; i++) {
+          elements[i].parentNode.removeChild(elements[i]);
+        }
+      }, ".inhouse__subscription-ribbon");
     } else if (domain === "latimes.com") {
       // Remove top bar
       await page.evaluate(sel => {
@@ -72,7 +80,6 @@ async function incognitoHandler(url, domain) {
           elements[i].parentNode.removeChild(elements[i]);
         }
       }, ".Page-header");
-
     } else if (domain === "wired.com") {
       // Remove top bar
       await page.evaluate(sel => {
