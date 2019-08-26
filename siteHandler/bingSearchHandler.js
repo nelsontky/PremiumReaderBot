@@ -1,4 +1,5 @@
 const puppeteer = require("puppeteer");
+const { removeAll } = require("../utils/removeElements");
 
 const FIRST_LINK = "#b_results > li.b_algo > div.b_algoheader";
 
@@ -19,30 +20,29 @@ async function bingSearchHandler(url, domain) {
     await page.setJavaScriptEnabled(false);
     await page.goto(`https://www.bing.com/search?q=${url}`);
     await page.waitForSelector(FIRST_LINK);
-    await page.click(FIRST_LINK);
-    await page.waitFor("title");
+
+    await Promise.all([
+      page.waitForNavigation({
+        timeout: 10000,
+        waitUntil: "domcontentloaded"
+      }),
+      page.click(FIRST_LINK)
+    ]);
 
     // Domain specific hacks
     if (domain === "ft.com") {
-      await page.waitFor(".cookie-banner");
-
       // Removes cookies prompt
-      await page.evaluate(sel => {
-        let elements = document.querySelectorAll(sel);
-        for (let i = 0; i < elements.length; i++) {
-          elements[i].parentNode.removeChild(elements[i]);
-        }
-      }, ".cookie-banner");
+      await removeAll(".cookie-banner", page);
     }
 
     await page.emulateMedia("screen");
 
     await page.pdf({ path: "article.pdf", width: 414, height: 736 });
-    browser.close();
   } catch (e) {
     await page.pdf({ path: "error.pdf", width: 414, height: 736 });
-    browser.close();
     throw e;
+  } finally {
+    browser.close();
   }
 }
 

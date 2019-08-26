@@ -1,4 +1,5 @@
 const puppeteer = require("puppeteer");
+const { removeOne, removeAll } = require("../utils/removeElements");
 
 async function incognitoHandler(url, domain) {
   const browser = await puppeteer.launch({
@@ -16,74 +17,48 @@ async function incognitoHandler(url, domain) {
 
     await page.setJavaScriptEnabled(false);
 
-    await page.goto(`${url}`);
-    await page.waitFor("title");
-    await page.waitFor(1000);
+    await Promise.all([
+      page.waitForNavigation({
+        timeout: 10000,
+        waitUntil: "domcontentloaded"
+      }),
+      page.goto(`${url}`)
+    ]);
 
     // Domain specific hacks
-    if (domain === "baltimoresun.com") {
-      // Removes ad bar
-      await page.evaluate(sel => {
-        let elements = document.querySelectorAll(sel);
-        for (let i = 0; i < elements.length; i++) {
-          elements[i].parentNode.removeChild(elements[i]);
-        }
-      }, ".trb_ad_st_m");
-    } else if (domain === "bostonglobe.com") {
-      // Remove top bar
-      await page.evaluate(sel => {
-        let topBar = document.querySelector(sel);
-        topBar.parentNode.removeChild(topBar);
-      }, "#app-bar");
-    } else if (domain === "chicagotribune.com") {
-      // Removes ad bar
-      await page.evaluate(sel => {
-        let elements = document.querySelectorAll(sel);
-        for (let i = 0; i < elements.length; i++) {
-          elements[i].parentNode.removeChild(elements[i]);
-        }
-      }, ".pb-ad");
-    } else if (domain === "economist.com") {
-      // Remove top bar
-      await page.evaluate(sel => {
-        let elements = document.querySelectorAll(sel);
-        for (let i = 0; i < elements.length; i++) {
-          elements[i].parentNode.removeChild(elements[i]);
-        }
-      }, ".sticky-outer-wrapper");
-
-      await page.evaluate(sel => {
-        let elements = document.querySelectorAll(sel);
-        for (let i = 0; i < elements.length; i++) {
-          elements[i].parentNode.removeChild(elements[i]);
-        }
-      }, ".inhouse__subscription-ribbon");
-    } else if (domain === "latimes.com") {
-      // Remove top bar
-      await page.evaluate(sel => {
-        let elements = document.querySelectorAll(sel);
-        for (let i = 0; i < elements.length; i++) {
-          elements[i].parentNode.removeChild(elements[i]);
-        }
-      }, ".Page-header");
-    } else if (domain === "wired.com") {
-      // Remove top bar
-      await page.evaluate(sel => {
-        let elements = document.querySelectorAll(sel);
-        for (let i = 0; i < elements.length; i++) {
-          elements[i].parentNode.removeChild(elements[i]);
-        }
-      }, ".header");
+    switch (domain) {
+      case "baltimoresun.com":
+        await removeAll(".trb_ad_st_m", page);
+        break;
+      case "bostonglobe.com":
+        await removeOne("#app-bar", page);
+        break;
+      case "chicagotribune.com":
+        await removeAll(".pb-ad", page);
+        break;
+      case "economist.com":
+        await removeAll(".sticky-outer-wrapper", page);
+        // Remove subscription overlay
+        await removeAll(".inhouse__subscription-ribbon", page);
+        break;
+      case "latimes.com":
+        await removeAll(".Page-header", page);
+        break;
+      case "wired.com":
+        await removeAll(".header", page);
+        break;
+      default:
+        break;
     }
 
     await page.emulateMedia("screen");
 
     await page.pdf({ path: "article.pdf", width: 414, height: 736 });
-    browser.close();
   } catch (e) {
     await page.pdf({ path: "error.pdf", width: 414, height: 736 });
-    browser.close();
     throw e;
+  } finally {
+    browser.close();
   }
 }
 

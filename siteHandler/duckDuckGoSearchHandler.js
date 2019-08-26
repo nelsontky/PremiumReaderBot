@@ -1,4 +1,5 @@
 const puppeteer = require("puppeteer");
+const { removeAll } = require("../utils/removeElements");
 
 const FIRST_LINK = "#links > div:nth-child(1) > div > h2";
 
@@ -19,28 +20,29 @@ async function duckDuckGoSearchHandler(url, domain) {
     await page.setJavaScriptEnabled(false);
     await page.goto(`https://duckduckgo.com/html?q=${url}&k1=-1&kl=us-en`);
     await page.waitForSelector(FIRST_LINK);
-    await page.click(FIRST_LINK);
-    await page.waitFor("title");
+
+    await Promise.all([
+      page.waitForNavigation({
+        timeout: 10000,
+        waitUntil: "domcontentloaded"
+      }),
+      page.click(FIRST_LINK)
+    ]);
 
     // Domain specific hacks
     if (domain === "wsj.com") {
-      await page.waitFor("#full-header");
-
       // Removes WSJ top bar
-      await page.evaluate(sel => {
-        let topBar = document.querySelector(sel);
-        topBar.parentNode.removeChild(topBar);
-      }, "#full-header");
+      await removeAll("header", page);
     }
 
     await page.emulateMedia("screen");
 
     await page.pdf({ path: "article.pdf", width: 414, height: 736 });
-    browser.close();
   } catch (e) {
     await page.pdf({ path: "error.pdf", width: 414, height: 736 });
-    browser.close();
     throw e;
+  } finally {
+    browser.close();
   }
 }
 

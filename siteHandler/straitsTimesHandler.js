@@ -1,4 +1,5 @@
 const puppeteer = require("puppeteer");
+const { removeOne } = require("../utils/removeElements");
 const CREDS = require("../creds/straitsTimes");
 
 const LOGIN_PAGE =
@@ -13,8 +14,10 @@ async function straitsTimesHandler(url) {
     defaultViewport: { height: 736, width: 414 },
     args: ["--no-sandbox"]
   });
+
+  const page = await browser.newPage();
+
   try {
-    const page = await browser.newPage();
     await page.setUserAgent(
       "Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1"
     );
@@ -27,33 +30,40 @@ async function straitsTimesHandler(url) {
     await page.click(PASSWORD_SELECTOR);
     await page.keyboard.type(CREDS.password);
 
-    await page.click(BUTTON_SELECTOR);
-
-    await page.waitForNavigation();
-    await page.waitFor(1000);
+    await Promise.all([
+      page.waitForNavigation({
+        timeout: 10000,
+        waitUntil: "domcontentloaded"
+      }),
+      page.click(BUTTON_SELECTOR)
+    ]);
 
     const page2 = await browser.newPage();
-    await page2.goto(url);
-    await page2.waitForSelector("title");
-    await page2.waitFor(1000);
+
+    await Promise.all([
+      page.waitForNavigation({
+        waitUntil: "domcontentloaded"
+      }),
+      page2.goto(url)
+    ]);
+
     // Disable Javascript so weird overlays can't be created
     await page2.setJavaScriptEnabled(false);
+
     await page2.reload();
-    await page2.waitForSelector("title");
+    await page2.waitForSelector(".back-to-top");
 
     // Remove up arrow
-    await page2.evaluate(sel => {
-      let arrow = document.querySelector(sel);
-      arrow.parentNode.removeChild(arrow);
-    }, ".back-to-top");
+    await removeOne(".back-to-top", page2);
 
     await page2.emulateMedia("screen");
 
     await page2.pdf({ path: "article.pdf", width: 414, height: 736 });
-    browser.close();
   } catch (e) {
-    browser.close();
+    await page.pdf({ path: "error.pdf", width: 414, height: 736 });
     throw e;
+  } finally {
+    browser.close();
   }
 }
 
