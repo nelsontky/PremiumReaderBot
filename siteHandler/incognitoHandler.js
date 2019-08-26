@@ -24,6 +24,7 @@ async function incognitoHandler(url, domain) {
       }),
       page.goto(`${url}`)
     ]);
+    await page.waitFor(1000);
 
     // Domain specific hacks
     switch (domain) {

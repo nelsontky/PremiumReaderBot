@@ -28,6 +28,7 @@ async function duckDuckGoSearchHandler(url, domain) {
       }),
       page.click(FIRST_LINK)
     ]);
+    await page.waitFor(1000);
 
     // Domain specific hacks
     if (domain === "wsj.com") {

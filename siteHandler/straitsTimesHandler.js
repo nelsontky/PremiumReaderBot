@@ -46,12 +46,14 @@ async function straitsTimesHandler(url) {
       }),
       page2.goto(url)
     ]);
+    await page.waitFor(1000);
 
     // Disable Javascript so weird overlays can't be created
     await page2.setJavaScriptEnabled(false);
 
     await page2.reload();
     await page2.waitForSelector(".back-to-top");
+    await page.waitFor(1000);
 
     // Remove up arrow
     await removeOne(".back-to-top", page2);
