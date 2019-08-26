@@ -1,5 +1,5 @@
 const puppeteer = require("puppeteer");
-const { removeAll } = require("../utils/removeElements");
+const { removeOne, removeAll } = require("../utils/removeElements");
 
 const FIRST_LINK = "#links > div:nth-child(1) > div > h2";
 
@@ -34,6 +34,7 @@ async function duckDuckGoSearchHandler(url, domain) {
     if (domain === "wsj.com") {
       // Removes WSJ top bar
       await removeAll("header", page);
+      await removeOne("#full-header", page);
     }
 
     await page.emulateMedia("screen");
