@@ -27,7 +27,10 @@ function handleError(ctx, e, cb) {
 function sendArticle(ctx) {
   ctx.replyWithDocument(
     { source: "article.pdf" },
-    Extra.inReplyTo(ctx.update.message.message_id)
+    {
+      reply_to_message_id: ctx.update.message.message_id,
+      caption: "Open this PDF"
+    }
   );
 }
 
@@ -36,21 +39,23 @@ let jobQueue = queue();
 jobQueue.autostart = true;
 jobQueue.concurrency = 1;
 
-bot.command("start", ctx => ctx.reply(helpMessage));
-bot.command("help", ctx => ctx.reply(helpMessage));
+bot.command("start", ctx => ctx.replyWithMarkdown(helpMessage));
+bot.command("help", ctx => ctx.replyWithMarkdown(helpMessage));
 
-bot.hears(/read (.+)/, async ctx => {
-  const url = ctx.match[1];
+bot.hears(/\S+/, async ctx => {
+  const url = ctx.match[0];
 
   if (!urlTools.isUrl(url)) {
-    ctx.reply("Input is not a valid URL!");
-    ctx.reply(helpMessage);
+    ctx
+      .reply("Input is not a valid URL!")
+      .then(() => ctx.replyWithMarkdown(helpMessage));
   } else {
     const domain = urlTools.getDomain(url);
 
     if (!supportedSites.includes(domain)) {
-      ctx.reply("Website not supported");
-      ctx.reply(helpMessage);
+      ctx
+        .reply("Website not supported")
+        .then(() => ctx.replyWithMarkdown(helpMessage));
       return;
     }
 
