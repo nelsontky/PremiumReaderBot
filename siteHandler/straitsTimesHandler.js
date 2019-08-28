@@ -1,5 +1,4 @@
 const puppeteer = require("puppeteer");
-const { removeOne } = require("../utils/removeElements");
 const CREDS = require("../creds/straitsTimes");
 
 const LOGIN_PAGE =
@@ -52,7 +51,7 @@ async function straitsTimesHandler(url) {
     await page2.setJavaScriptEnabled(false);
 
     await page2.reload();
-    await page2.waitFor(2000);
+    // await page2.waitFor(2000);
 
     await page2.emulateMedia("screen");
 
