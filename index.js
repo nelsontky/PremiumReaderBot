@@ -20,7 +20,7 @@ function handleError(ctx, e, cb) {
     `Error, please try again. \nDetails: \n\`\`\`${e}\`\`\``,
     Extra.inReplyTo(ctx.update.message.message_id)
   );
-  ctx.reply(helpMessage);
+  ctx.replyWithMarkdown(helpMessage);
   cb();
 }
 
