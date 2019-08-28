@@ -39,19 +39,13 @@ async function straitsTimesHandler(url) {
 
     const page2 = await browser.newPage();
 
-    await Promise.all([
-      page.waitForNavigation({
-        waitUntil: "domcontentloaded"
-      }),
-      page2.goto(url)
-    ]);
-    await page.waitFor(1000);
+    await page2.goto(url, { timeout: 20000 }).catch(e => e);
 
     // Disable Javascript so weird overlays can't be created
     await page2.setJavaScriptEnabled(false);
 
     await page2.reload();
-    // await page2.waitFor(2000);
+    await page2.waitFor(2000);
 
     await page2.emulateMedia("screen");
 
