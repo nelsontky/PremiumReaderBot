@@ -51,7 +51,13 @@ async function straitsTimesHandler(url) {
     // Disable Javascript so weird overlays can't be created
     await page2.setJavaScriptEnabled(false);
 
-    await page2.reload();
+    await Promise.all([
+      page.waitForNavigation({
+        waitUntil: "domcontentloaded"
+      }),
+      page2.reload()
+    ]);
+
     // await page2.waitForSelector(".back-to-top");
     // await page.waitFor(1000);
 
