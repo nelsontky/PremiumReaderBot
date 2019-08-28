@@ -34,10 +34,16 @@ async function duckDuckGoSearchHandler(url, domain) {
         break;
     }
 
+    // Enable for ddg search
+    await page.setJavaScriptEnabled(true);
+
     await page.goto(
-      `https://duckduckgo.com/html?q=${term} site:${domain}&k1=-1&kl=us-en`
+      `https://duckduckgo.com/?q=${term} site:${domain}&k1=-1&kl=us-en`
     );
     await page.waitForSelector(FIRST_LINK);
+
+    // Disable again
+    await page.setJavaScriptEnabled(false);
 
     await Promise.all([
       page.waitForNavigation({
