@@ -52,11 +52,11 @@ async function straitsTimesHandler(url) {
     await page2.setJavaScriptEnabled(false);
 
     await page2.reload();
-    await page2.waitForSelector(".back-to-top");
-    await page.waitFor(1000);
+    // await page2.waitForSelector(".back-to-top");
+    // await page.waitFor(1000);
 
     // Remove up arrow
-    await removeOne(".back-to-top", page2);
+    // await removeOne(".back-to-top", page2);
 
     await page2.emulateMedia("screen");
 
