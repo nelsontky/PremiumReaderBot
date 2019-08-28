@@ -16,22 +16,30 @@ const incognitoHandler = require("./siteHandler/incognitoHandler");
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
 function handleError(ctx, e, cb) {
-  ctx.replyWithMarkdown(
-    `Error, please try again. \nDetails: \n\`\`\`${e}\`\`\``,
-    Extra.inReplyTo(ctx.update.message.message_id)
-  );
-  ctx.replyWithMarkdown(helpMessage);
+  ctx
+    .replyWithMarkdown(
+      `Error, please try again. \nDetails: \n\`\`\`${e}\`\`\``,
+      Extra.inReplyTo(ctx.update.message.message_id)
+    )
+    .catch(e => handleBlocked());
+  ctx.replyWithMarkdown(helpMessage).catch(e => handleBlocked());
   cb();
 }
 
 function sendArticle(ctx) {
-  ctx.replyWithDocument(
-    { source: "article.pdf" },
-    {
-      reply_to_message_id: ctx.update.message.message_id,
-      caption: "Open this PDF"
-    }
-  );
+  ctx
+    .replyWithDocument(
+      { source: "article.pdf" },
+      {
+        reply_to_message_id: ctx.update.message.message_id,
+        caption: "Open this PDF"
+      }
+    )
+    .catch(e => handleBlocked());
+}
+
+function handleBlocked() {
+  console.log("lol");
 }
 
 // One task executes at once
@@ -39,8 +47,12 @@ let jobQueue = queue();
 jobQueue.autostart = true;
 jobQueue.concurrency = 1;
 
-bot.command("start", ctx => ctx.replyWithMarkdown(helpMessage));
-bot.command("help", ctx => ctx.replyWithMarkdown(helpMessage));
+bot.command("start", ctx =>
+  ctx.replyWithMarkdown(helpMessage).catch(e => handleBlocked())
+);
+bot.command("help", ctx =>
+  ctx.replyWithMarkdown(helpMessage).catch(e => handleBlocked())
+);
 
 bot.hears(/\S+/, async ctx => {
   const url = ctx.match[0];
@@ -48,22 +60,28 @@ bot.hears(/\S+/, async ctx => {
   if (!urlTools.isUrl(url)) {
     ctx
       .reply("Input is not a valid URL!")
-      .then(() => ctx.replyWithMarkdown(helpMessage));
+      .then(() =>
+        ctx.replyWithMarkdown(helpMessage).catch(e => handleBlocked())
+      );
   } else {
     const domain = urlTools.getDomain(url);
 
     if (!supportedSites.includes(domain)) {
       ctx
         .reply("Website not supported")
-        .then(() => ctx.replyWithMarkdown(helpMessage));
+        .then(() =>
+          ctx.replyWithMarkdown(helpMessage).catch(e => handleBlocked())
+        );
       return;
     }
 
     // Starts processing the job
-    ctx.reply(
-      "Wait a while ah loading... ...",
-      Extra.inReplyTo(ctx.update.message.message_id)
-    );
+    ctx
+      .reply(
+        "Wait a while ah loading... ...",
+        Extra.inReplyTo(ctx.update.message.message_id)
+      )
+      .catch(e => handleBlocked());
 
     switch (domain) {
       case "wsj.com":
