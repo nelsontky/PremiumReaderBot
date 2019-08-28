@@ -1,6 +1,7 @@
 require("dotenv").config();
 
 const Telegraf = require("telegraf");
+const { drop } = require('telegraf')
 const Extra = require("telegraf/extra");
 const queue = require("queue");
 const puppeteer = require("puppeteer");
@@ -21,8 +22,8 @@ function handleError(ctx, e, cb) {
       `Error, please try again. \nDetails: \n\`\`\`${e}\`\`\``,
       Extra.inReplyTo(ctx.update.message.message_id)
     )
-    .catch(e => handleBlocked());
-  ctx.replyWithMarkdown(helpMessage).catch(e => handleBlocked());
+    .catch(() => handleBlocked());
+  ctx.replyWithMarkdown(helpMessage).catch(() => handleBlocked());
   cb();
 }
 
@@ -35,11 +36,11 @@ function sendArticle(ctx) {
         caption: "Open this PDF"
       }
     )
-    .catch(e => handleBlocked());
+    .catch(() => handleBlocked());
 }
 
 function handleBlocked() {
-  console.log("lol");
+  console.log("Blocked by user");
 }
 
 // One task executes at once
@@ -48,10 +49,10 @@ jobQueue.autostart = true;
 jobQueue.concurrency = 1;
 
 bot.command("start", ctx =>
-  ctx.replyWithMarkdown(helpMessage).catch(e => handleBlocked())
+  ctx.replyWithMarkdown(helpMessage).catch(() => handleBlocked())
 );
 bot.command("help", ctx =>
-  ctx.replyWithMarkdown(helpMessage).catch(e => handleBlocked())
+  ctx.replyWithMarkdown(helpMessage).catch(() => handleBlocked())
 );
 
 bot.hears(/\S+/, async ctx => {
@@ -61,7 +62,7 @@ bot.hears(/\S+/, async ctx => {
     ctx
       .reply("Input is not a valid URL!")
       .then(() =>
-        ctx.replyWithMarkdown(helpMessage).catch(e => handleBlocked())
+        ctx.replyWithMarkdown(helpMessage).catch(() => handleBlocked())
       );
   } else {
     const domain = urlTools.getDomain(url);
@@ -70,7 +71,7 @@ bot.hears(/\S+/, async ctx => {
       ctx
         .reply("Website not supported")
         .then(() =>
-          ctx.replyWithMarkdown(helpMessage).catch(e => handleBlocked())
+          ctx.replyWithMarkdown(helpMessage).catch(() => handleBlocked())
         );
       return;
     }
@@ -123,4 +124,5 @@ bot.hears(/\S+/, async ctx => {
   }
 });
 
+bot.drop((ctx) => true);
 bot.launch();
