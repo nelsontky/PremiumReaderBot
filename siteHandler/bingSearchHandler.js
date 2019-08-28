@@ -1,5 +1,6 @@
 const puppeteer = require("puppeteer");
 const { removeAll } = require("../utils/removeElements");
+const getSelectorText = require("../utils/getSelectorText");
 
 const FIRST_LINK = "#b_results > li.b_algo > div.b_algoheader";
 
@@ -18,7 +19,25 @@ async function bingSearchHandler(url, domain) {
     );
     // Disable Javascript so weird overlays can't be created
     await page.setJavaScriptEnabled(false);
-    await page.goto(`https://www.bing.com/search?q=${url}`);
+
+    await page.goto(url);
+
+    // Get search term, domain specific
+    let term = "";
+    switch (domain) {
+      case "ft.com":
+        term = await getSelectorText(
+          ".barrier__util-margin--top > blockquote:nth-child(2)",
+          page
+        );
+        break;
+      default:
+        await page.waitForSelector("title");
+        term = page.title();
+        break;
+    }
+
+    await page.goto(`https://www.bing.com/search?q=${term} site:${domain}`);
     await page.waitForSelector(FIRST_LINK);
 
     await Promise.all([

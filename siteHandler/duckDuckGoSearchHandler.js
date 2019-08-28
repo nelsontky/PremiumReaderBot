@@ -1,5 +1,6 @@
 const puppeteer = require("puppeteer");
 const { removeOne, removeAll } = require("../utils/removeElements");
+const getSelectorText = require("../utils/getSelectorText");
 
 const FIRST_LINK = "#links > div:nth-child(1) > div > h2";
 
@@ -18,7 +19,24 @@ async function duckDuckGoSearchHandler(url, domain) {
     );
     // Disable Javascript so weird overlays can't be created
     await page.setJavaScriptEnabled(false);
-    await page.goto(`https://duckduckgo.com/html?q=${url}&k1=-1&kl=us-en`);
+
+    await page.goto(url);
+
+    // Get search term, domain specific
+    let term = "";
+    switch (domain) {
+      case "wsj.com":
+        term = await getSelectorText(".wsj-article-headline", page);
+        break;
+      default:
+        await page.waitForSelector("title");
+        term = page.title();
+        break;
+    }
+
+    await page.goto(
+      `https://duckduckgo.com/html?q=${term} site:${domain}&k1=-1&kl=us-en`
+    );
     await page.waitForSelector(FIRST_LINK);
 
     await Promise.all([
