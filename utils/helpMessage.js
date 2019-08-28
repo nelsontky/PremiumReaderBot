@@ -1,6 +1,6 @@
 const supportedSites = require("../supportedSites");
 
-module.exports = `Read premium articles for free!
+module.exports = `Read premium paywalled articles for free!
 *Usage: Just send your article link (only the article link, nothing else) directly to the bot!*
 URL has to start with http:// or https://
 
