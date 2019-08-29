@@ -19,7 +19,6 @@ async function incognitoHandler(url, domain) {
 
     await Promise.all([
       page.waitForNavigation({
-        timeout: 10000,
         waitUntil: "domcontentloaded"
       }),
       page.goto(`${url}`)
