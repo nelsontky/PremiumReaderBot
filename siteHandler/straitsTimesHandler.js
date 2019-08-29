@@ -31,7 +31,6 @@ async function straitsTimesHandler(url) {
 
     await Promise.all([
       page.waitForNavigation({
-        timeout: 10000,
         waitUntil: "domcontentloaded"
       }),
       page.click(BUTTON_SELECTOR)
