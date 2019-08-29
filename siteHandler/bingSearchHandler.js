@@ -42,7 +42,6 @@ async function bingSearchHandler(url, domain) {
 
     await Promise.all([
       page.waitForNavigation({
-        timeout: 10000,
         waitUntil: "domcontentloaded"
       }),
       page.click(FIRST_LINK)
