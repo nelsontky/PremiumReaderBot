@@ -11,7 +11,8 @@ async function straitsTimesHandler(url) {
   const browser = await puppeteer.launch({
     headless: true,
     defaultViewport: { height: 736, width: 414 },
-    args: ["--no-sandbox"]
+    args: ["--no-sandbox"],
+    userDataDir: "./st_data"
   });
 
   const page = await browser.newPage();
