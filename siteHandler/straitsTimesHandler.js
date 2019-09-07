@@ -38,21 +38,21 @@ async function straitsTimesHandler(url) {
 
     await page.waitFor(5000);
 
-    const page2 = await browser.newPage();
+    await page.goto("https://www.straitstimes.com/");
 
-    await page2.goto(url).catch(e => e);
+    await page.goto(url).catch(e => e);
 
     // Disable Javascript so weird overlays can't be created
-    await page2.setJavaScriptEnabled(false);
+    await page.setJavaScriptEnabled(false);
 
-    await page2.reload();
-    await page2.waitFor(2000);
+    await page.reload();
+    await page.waitFor(2000);
 
-    await page2.emulateMedia("screen");
+    await page.emulateMedia("screen");
 
-    await page2.pdf({ path: "article.pdf", width: 414, height: 736 });
+    await page.pdf({ path: "article.pdf", width: 414, height: 736 });
   } catch (e) {
-    await page2.pdf({ path: "error.pdf", width: 414, height: 736 });
+    await page.pdf({ path: "error.pdf", width: 414, height: 736 });
     throw e;
   } finally {
     browser.close();
