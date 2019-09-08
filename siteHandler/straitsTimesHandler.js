@@ -15,7 +15,7 @@ async function straitsTimesHandler(url) {
     userDataDir: "./st_data"
   });
 
-  const page = await browser.newPage();
+  let page = await browser.newPage();
 
   try {
     await page.setUserAgent(
@@ -35,18 +35,22 @@ async function straitsTimesHandler(url) {
       page.click(BUTTON_SELECTOR)
     ]);
 
+
+    page = await browser.newPage();
+
     try {
       await Promise.all([
-        page.waitForNavigation({ timeout: 10000 }),
+        page.waitForNavigation({ waitUntil: "networkidle2" }),
         page.goto(url)
       ]);
     } catch (e) {}
+
+    await page.waitFor(5000);
 
     // Disable Javascript so weird overlays can't be created
     await page.setJavaScriptEnabled(false);
 
     await page.reload();
-    await page.waitFor(2000);
 
     await page.emulateMedia("screen");
 
