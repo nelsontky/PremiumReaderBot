@@ -3,8 +3,9 @@ const CREDS = require("../creds/straitsTimes");
 
 const LOGIN_PAGE = "https://acc-reg.sphdigital.com/RegAuth2/gdsLogin.html";
 const USERNAME_SELECTOR = "#j_username";
-const PASSWORD_SELECTOR = "#loginForm > ol:nth-child(1) > li:nth-child(5) > input:nth-child(1)";
-const BUTTON_SELECTOR = "button.formbutton:nth-child(1)"
+const PASSWORD_SELECTOR =
+  "#loginForm > ol:nth-child(1) > li:nth-child(5) > input:nth-child(1)";
+const BUTTON_SELECTOR = "button.formbutton:nth-child(1)";
 
 async function straitsTimesHandler(url) {
   const browser = await puppeteer.launch({
@@ -30,17 +31,16 @@ async function straitsTimesHandler(url) {
     await page.keyboard.type(CREDS.password);
 
     await Promise.all([
-      page.waitForNavigation({
-        waitUntil: "domcontentloaded"
-      }),
+      page.waitForNavigation({ waitUntil: "networkidle0" }),
       page.click(BUTTON_SELECTOR)
     ]);
 
-    await page.waitFor(5000);
-
-    await page.goto("https://www.straitstimes.com/");
-
-    await page.goto(url).catch(e => e);
+    try {
+      await Promise.all([
+        page.waitForNavigation({ timeout: 10000 }),
+        page.goto(url)
+      ]);
+    } catch (e) {}
 
     // Disable Javascript so weird overlays can't be created
     await page.setJavaScriptEnabled(false);
