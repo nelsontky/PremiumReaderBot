@@ -4,7 +4,7 @@ const logoutOtherBrowser = "#btnMysphMsg";
 
 async function straitsTimesHandler(url) {
   const browser = await puppeteer.launch({
-    headless: !true,
+    headless: true,
     defaultViewport: { height: 736, width: 414 },
     args: ["--no-sandbox"],
     userDataDir: "./st_data"
@@ -50,7 +50,7 @@ async function straitsTimesHandler(url) {
     await page.pdf({ path: "error.pdf", width: 414, height: 736 });
     throw e;
   } finally {
-    // browser.close();
+    browser.close();
   }
 }
 
