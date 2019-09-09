@@ -1,6 +1,6 @@
 const puppeteer = require("puppeteer");
 
-const logoutOtherBrowser = "";
+const logoutOtherBrowser = "#btnMysphMsg";
 
 async function straitsTimesHandler(url) {
   const browser = await puppeteer.launch({
@@ -26,9 +26,17 @@ async function straitsTimesHandler(url) {
 
     await page.waitFor(5000);
 
+    // Try to logout from other browsers if present
+    try {
+      await Promise.all([
+        page.waitFor(5000),
+        page.click(logoutOtherBrowser)
+      ]);
+    } catch (e) {}
+
     // Disable Javascript so weird overlays can't be created
     
-    /*
+    
     await page.setJavaScriptEnabled(false);
 
     await page.reload();
@@ -36,7 +44,7 @@ async function straitsTimesHandler(url) {
     await page.emulateMedia("screen");
 
     await page.pdf({ path: "article.pdf", width: 414, height: 736 });
-    */
+    
     
   } catch (e) {
     await page.pdf({ path: "error.pdf", width: 414, height: 736 });
