@@ -36,7 +36,6 @@ async function straitsTimesHandler(url) {
 
     // Disable Javascript so weird overlays can't be created
     
-    
     await page.setJavaScriptEnabled(false);
 
     await page.reload();

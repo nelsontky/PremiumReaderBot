@@ -26,7 +26,7 @@ async function duckDuckGoSearchHandler(url, domain) {
     let term = "";
     switch (domain) {
       case "wsj.com":
-        term = await getSelectorText(".wsj-article-headline", page);
+        term = await getSelectorText("h1", page);
         break;
       default:
         await page.waitForSelector("title");
@@ -38,7 +38,7 @@ async function duckDuckGoSearchHandler(url, domain) {
     await page.setJavaScriptEnabled(true);
 
     await page.goto(
-      `https://duckduckgo.com/?q=${term} site:${domain}&k1=-1&kl=us-en`
+      `https://duckduckgo.com/?q=${term.trim()} site:${domain}&k1=-1&kl=us-en`
     );
     await page.waitForSelector(FIRST_LINK);
 
