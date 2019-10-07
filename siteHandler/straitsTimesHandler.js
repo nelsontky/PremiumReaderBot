@@ -4,7 +4,7 @@ const logoutOtherBrowser = "#btnMysphMsg";
 
 async function straitsTimesHandler(url) {
   const browser = await puppeteer.launch({
-    headless: true,
+    headless: false,
     defaultViewport: { height: 736, width: 414 },
     args: ["--no-sandbox"],
     userDataDir: "./st_data"
@@ -28,28 +28,23 @@ async function straitsTimesHandler(url) {
 
     // Try to logout from other browsers if present
     try {
-      await Promise.all([
-        page.waitFor(5000),
-        page.click(logoutOtherBrowser)
-      ]);
+      await Promise.all([page.waitFor(5000), page.click(logoutOtherBrowser)]);
     } catch (e) {}
 
     // Disable Javascript so weird overlays can't be created
-    
-    await page.setJavaScriptEnabled(false);
 
-    await page.reload();
+    // await page.setJavaScriptEnabled(false);
 
-    await page.emulateMedia("screen");
+    // await page.reload();
+
+    // await page.emulateMedia("screen");
 
     await page.pdf({ path: "article.pdf", width: 414, height: 736 });
-    
-    
   } catch (e) {
     await page.pdf({ path: "error.pdf", width: 414, height: 736 });
     throw e;
   } finally {
-    browser.close();
+    // browser.close();
   }
 }
 
