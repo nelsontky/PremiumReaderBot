@@ -24,12 +24,13 @@ async function straitsTimesHandler(url) {
       ]);
     } catch (e) {}
 
-    await page.waitFor(5000);
+    // await page.waitFor(5000);
 
     // Try to logout from other browsers if present
     try {
-      await Promise.all([page.waitFor(5000), page.click(logoutOtherBrowser)]);
+      await page.click(logoutOtherBrowser);
     } catch (e) {}
+    
 
     // Disable Javascript so weird overlays can't be created
 
