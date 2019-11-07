@@ -24,13 +24,16 @@ async function straitsTimesHandler(url) {
       ]);
     } catch (e) {}
 
-    // await page.waitFor(5000);
-
     // Try to logout from other browsers if present
     try {
-      await page.click(logoutOtherBrowser);
+      await Promise.all([
+        await page.click(logoutOtherBrowser),
+        await page.waitFor(3000)
+      ]);
+
     } catch (e) {}
-    
+
+    await page.waitFor(3000);
 
     // Disable Javascript so weird overlays can't be created
 
