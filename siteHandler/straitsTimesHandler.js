@@ -8,23 +8,23 @@ const { readDb, writeToDb } = require("../utils/jsonTools");
 const logoutOtherBrowser = "#btnMysphMsg";
 
 async function straitsTimesHandler(url) {
+  // Checks if ST link generated before
+  const request = await rp(url);
+  const heading = $(".node-header", request).text();
+  const db = await readDb();
+  if (db[heading] != undefined) {
+    // url has been generated before
+    return db[heading];
+  }
+
+  const browser = await puppeteer.launch({
+    headless: true,
+    defaultViewport: { height: 736, width: 414 },
+    args: ["--no-sandbox"],
+    userDataDir: "./st_data"
+  });
+
   try {
-    // Checks if ST link generated before
-    const request = await rp(url);
-    const heading = $(".node-header", request).text();
-    const db = await readDb();
-    if (db[heading] != undefined) {
-      // url has been generated before
-      return db[heading];
-    }
-
-    const browser = await puppeteer.launch({
-      headless: true,
-      defaultViewport: { height: 736, width: 414 },
-      args: ["--no-sandbox"],
-      userDataDir: "./st_data"
-    });
-
     let page = await browser.newPage();
 
     await page.setUserAgent(
