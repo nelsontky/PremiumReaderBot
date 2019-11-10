@@ -17,7 +17,7 @@ async function straitsTimesFromDb(url) {
 // Only run when db does not contain url
 async function straitsTimesHandler(url, db) {
   const browser = await puppeteer.launch({
-    headless: !true,
+    headless: true,
     defaultViewport: { height: 736, width: 414 },
     args: ["--no-sandbox"],
     userDataDir: "./st_data"
