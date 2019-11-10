@@ -7,11 +7,8 @@ const supportedSites = require("./supportedSites");
 const urlTools = require("./utils/urlTools");
 const helpMessage = require("./utils/helpMessage");
 
-const duckDuckGoSearchHandler = require("./siteHandler/duckDuckGoSearchHandler");
-const bingSearchHandler = require("./siteHandler/bingSearchHandler");
 const straitsTimesHandler = require("./siteHandler/straitsTimesHandler");
 const genericHandler = require("./siteHandler/genericHandler");
-const incognitoHandler = require("./siteHandler/incognitoHandler");
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
