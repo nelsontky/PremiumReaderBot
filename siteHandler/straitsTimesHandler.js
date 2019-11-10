@@ -10,7 +10,7 @@ const logoutOtherBrowser = "#btnMysphMsg";
 async function straitsTimesHandler(url) {
   // Checks if ST link generated before
   const request = await rp(url);
-  const heading = $(".node-header", request).text();
+  const heading = $("title", request).text();
   const db = await readDb();
   if (db[heading] != undefined) {
     // url has been generated before
@@ -50,7 +50,7 @@ async function straitsTimesHandler(url) {
 
     const content = await page.content();
 
-    const title = $(".node-header", content).text();
+    const title = $("title", content).text();
     let body = "";
     $(".odd.field-item > p", content).each((i, e) => {
       body += $(e).text() + "\n";
