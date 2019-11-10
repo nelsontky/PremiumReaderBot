@@ -55,7 +55,11 @@ async function straitsTimesHandler(url) {
     $(".odd.field-item > p", content).each((i, e) => {
       body += $(e).text() + "\n";
     });
-    const image = $("img.img-responsive", content)[0].attribs.src;
+    let image = "";
+    try {
+      // Some articles do not have images
+      image = $("img.img-responsive", content)[0].attribs.src;
+    } catch (e) {}
     const link = await postToTelegraph(title, body, image);
 
     // Write to db
