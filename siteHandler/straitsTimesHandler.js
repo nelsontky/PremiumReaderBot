@@ -1,18 +1,32 @@
+const $ = require("cheerio");
 const puppeteer = require("puppeteer");
+const rp = require("request-promise");
+
+const postToTelegraph = require("../utils/postToTelegraph");
+const { readDb, writeToDb } = require("../utils/jsonTools");
 
 const logoutOtherBrowser = "#btnMysphMsg";
 
 async function straitsTimesHandler(url) {
-  const browser = await puppeteer.launch({
-    headless: true,
-    defaultViewport: { height: 736, width: 414 },
-    args: ["--no-sandbox"],
-    userDataDir: "./st_data"
-  });
-
-  let page = await browser.newPage();
-
   try {
+    // Checks if ST link generated before
+    const request = await rp(url);
+    const heading = $(".node-header", request).text();
+    const db = await readDb();
+    if (db[heading] != undefined) {
+      // url has been generated before
+      return db[heading];
+    }
+
+    const browser = await puppeteer.launch({
+      headless: true,
+      defaultViewport: { height: 736, width: 414 },
+      args: ["--no-sandbox"],
+      userDataDir: "./st_data"
+    });
+
+    let page = await browser.newPage();
+
     await page.setUserAgent(
       "Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1"
     );
@@ -30,22 +44,26 @@ async function straitsTimesHandler(url) {
         await page.click(logoutOtherBrowser),
         await page.waitFor(3000)
       ]);
-
     } catch (e) {}
 
     await page.waitFor(3000);
 
-    // Disable Javascript so weird overlays can't be created
+    const content = await page.content();
 
-    await page.setJavaScriptEnabled(false);
+    const title = $(".node-header", content).text();
+    let body = "";
+    $(".odd.field-item > p", content).each((i, e) => {
+      body += $(e).text() + "\n";
+    });
+    const image = $("img.img-responsive", content)[0].attribs.src;
+    const link = await postToTelegraph(title, body, image);
 
-    await page.reload();
+    // Write to db
+    db[title] = link;
+    writeToDb(db);
 
-    await page.emulateMedia("screen");
-
-    await page.pdf({ path: "article.pdf", width: 414, height: 736 });
+    return link;
   } catch (e) {
-    await page.pdf({ path: "error.pdf", width: 414, height: 736 });
     throw e;
   } finally {
     browser.close();

@@ -1,10 +1,8 @@
 require("dotenv").config();
 
 const Telegraf = require("telegraf");
-const { drop } = require('telegraf')
 const Extra = require("telegraf/extra");
 const queue = require("queue");
-const puppeteer = require("puppeteer");
 const supportedSites = require("./supportedSites");
 const urlTools = require("./utils/urlTools");
 const helpMessage = require("./utils/helpMessage");
@@ -12,6 +10,7 @@ const helpMessage = require("./utils/helpMessage");
 const duckDuckGoSearchHandler = require("./siteHandler/duckDuckGoSearchHandler");
 const bingSearchHandler = require("./siteHandler/bingSearchHandler");
 const straitsTimesHandler = require("./siteHandler/straitsTimesHandler");
+const genericHandler = require("./siteHandler/genericHandler");
 const incognitoHandler = require("./siteHandler/incognitoHandler");
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
@@ -27,13 +26,12 @@ function handleError(ctx, e, cb) {
   cb();
 }
 
-function sendArticle(ctx) {
+function sendArticle(ctx, link) {
   ctx
-    .replyWithDocument(
-      { source: "article.pdf" },
+    .replyWithHTML(
+      `<a href="${link}">Click on this link or press INSTANT VIEW</a>`,
       {
-        reply_to_message_id: ctx.update.message.message_id,
-        caption: "Open this PDF"
+        reply_to_message_id: ctx.update.message.message_id
       }
     )
     .catch(() => handleBlocked());
@@ -85,37 +83,18 @@ bot.hears(/\S+/, async ctx => {
       .catch(e => handleBlocked());
 
     switch (domain) {
-      case "wsj.com":
-        jobQueue.push(cb => {
-          duckDuckGoSearchHandler(url, domain)
-            .then(() => sendArticle(ctx))
-            .then(() => cb())
-            .catch(e => handleError(ctx, e, cb));
-        });
-        break;
-
-      case "ft.com":
-        jobQueue.push(cb => {
-          bingSearchHandler(url, domain)
-            .then(() => sendArticle(ctx))
-            .then(() => cb())
-            .catch(e => handleError(ctx, e, cb));
-        });
-        break;
-
       case "straitstimes.com":
         jobQueue.push(cb => {
           straitsTimesHandler(url)
-            .then(() => sendArticle(ctx))
+            .then(link => sendArticle(ctx, link))
             .then(() => cb())
             .catch(e => handleError(ctx, e, cb));
         });
         break;
-
       default:
         jobQueue.push(cb => {
-          incognitoHandler(url, domain)
-            .then(() => sendArticle(ctx))
+          genericHandler(url, domain)
+            .then(link => sendArticle(ctx, link))
             .then(() => cb())
             .catch(e => handleError(ctx, e, cb));
         });
@@ -124,5 +103,5 @@ bot.hears(/\S+/, async ctx => {
   }
 });
 
-bot.drop((ctx) => true);
+bot.drop(ctx => true);
 bot.launch();

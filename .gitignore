@@ -75,3 +75,5 @@ st_data/
 article.pdf
 error.pdf
 nohup.out
+utils/telegraphAccess.js
+utils/st.json

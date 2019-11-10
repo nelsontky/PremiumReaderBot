@@ -1,16 +1,6 @@
 let sites = [
-  "ft.com",
   "straitstimes.com",
-  "wsj.com",
-  "baltimoresun.com",
-  "bostonglobe.com",
-  "businessinsider.com",
-  "businessinsider.sg",
-  "chicagotribune.com",
-  "economist.com",
-  "latimes.com",
-  "wired.com",
-  "nytimes.com"
+  "wsj.com"
 ];
 
 sites.sort((a, b) => a.localeCompare(b));
