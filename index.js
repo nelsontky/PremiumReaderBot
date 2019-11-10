@@ -7,7 +7,10 @@ const supportedSites = require("./supportedSites");
 const urlTools = require("./utils/urlTools");
 const helpMessage = require("./utils/helpMessage");
 
-const straitsTimesHandler = require("./siteHandler/straitsTimesHandler");
+const {
+  straitsTimesHandler,
+  straitsTimesFromDb
+} = require("./siteHandler/straitsTimesHandler");
 const genericHandler = require("./siteHandler/genericHandler");
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
@@ -81,20 +84,28 @@ bot.hears(/\S+/, async ctx => {
 
     switch (domain) {
       case "straitstimes.com":
-        jobQueue.push(cb => {
-          straitsTimesHandler(url)
-            .then(link => sendArticle(ctx, link))
-            .then(() => cb())
-            .catch(e => handleError(ctx, e, cb));
-        });
+        straitsTimesFromDb(url)
+          .then(obj => {
+            if (obj.db[obj.heading] !== undefined) {
+              // url exists in db
+              sendArticle(ctx, obj.db[obj.heading]);
+            } else {
+              jobQueue.push(cb => {
+                straitsTimesHandler(url, obj.db)
+                  .then(link => sendArticle(ctx, link))
+                  .then(() => cb())
+                  .catch(e => handleError(ctx, e, cb));
+              });
+            }
+          })
+          .catch(e => handleError(ctx, e, () => null));
         break;
+
       default:
-        jobQueue.push(cb => {
-          genericHandler(url, domain)
-            .then(link => sendArticle(ctx, link))
-            .then(() => cb())
-            .catch(e => handleError(ctx, e, cb));
-        });
+        genericHandler(url, domain)
+          .then(link => sendArticle(ctx, link))
+          .then(() => cb())
+          .catch(e => handleError(ctx, e, cb));
         break;
     }
   }

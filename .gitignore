@@ -77,3 +77,4 @@ error.pdf
 nohup.out
 utils/telegraphAccess.js
 utils/st.json
+utils/stCreds.js

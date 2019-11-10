@@ -1,24 +1,23 @@
 const $ = require("cheerio");
-const puppeteer = require("puppeteer");
 const rp = require("request-promise");
+const puppeteer = require("puppeteer");
 
 const postToTelegraph = require("../utils/postToTelegraph");
-const { readDb, writeToDb } = require("../utils/jsonTools");
+const { writeToDb, readDb } = require("../utils/jsonTools");
 
 const logoutOtherBrowser = "#btnMysphMsg";
 
-async function straitsTimesHandler(url) {
-  // Checks if ST link generated before
+async function straitsTimesFromDb(url) {
   const request = await rp(url);
   const heading = $("title", request).text();
   const db = await readDb();
-  if (db[heading] != undefined) {
-    // url has been generated before
-    return db[heading];
-  }
+  return { heading, db };
+}
 
+// Only run when db does not contain url
+async function straitsTimesHandler(url, db) {
   const browser = await puppeteer.launch({
-    headless: true,
+    headless: !true,
     defaultViewport: { height: 736, width: 414 },
     args: ["--no-sandbox"],
     userDataDir: "./st_data"
@@ -74,4 +73,4 @@ async function straitsTimesHandler(url) {
   }
 }
 
-module.exports = straitsTimesHandler;
+module.exports = { straitsTimesHandler, straitsTimesFromDb };
