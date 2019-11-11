@@ -6,10 +6,11 @@ const postToTelegraph = require("../utils/postToTelegraph");
 const { writeToDb, readDb } = require("../utils/jsonTools");
 
 const logoutOtherBrowser = "#btnMysphMsg";
+const titleSelector = ".headline.node-title";
 
 async function straitsTimesFromDb(url) {
   const request = await rp(url);
-  const heading = $("title", request).text();
+  const heading = $(titleSelector, request).text();
   const db = await readDb();
   return { heading, db };
 }
@@ -49,7 +50,7 @@ async function straitsTimesHandler(url, db) {
 
     const content = await page.content();
 
-    const title = $("title", content).text();
+    const title = $(titleSelector, content).text();
     let body = "";
     $(".odd.field-item > p", content).each((i, e) => {
       body += $(e).text() + "\n";
