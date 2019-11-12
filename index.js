@@ -28,13 +28,15 @@ function handleError(ctx, e, cb) {
 
 function sendArticle(ctx, link) {
   ctx
-    .replyWithHTML(
-      `<a href="${link}">Click on this link or press INSTANT VIEW</a>`,
+    .replyWithMarkdown(
+      `[Click on this link or press INSTANT VIEW](${link})
+      
+[Open this link if top link and INSTANT VIEW does not load](https://ccb.wtf/miniProxy.php?${link})`,
       {
         reply_to_message_id: ctx.update.message.message_id
       }
     )
-    .catch(() => handleBlocked());
+    .catch((e) => console.log(e));
 }
 
 function handleBlocked() {
