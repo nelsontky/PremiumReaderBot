@@ -36,7 +36,7 @@ function sendArticle(ctx, link) {
         reply_to_message_id: ctx.update.message.message_id
       }
     )
-    .catch((e) => console.log(e));
+    .catch(() => handleBlocked());
 }
 
 function handleBlocked() {
