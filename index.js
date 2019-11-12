@@ -104,8 +104,7 @@ bot.hears(/\S+/, async ctx => {
       default:
         genericHandler(url, domain)
           .then(link => sendArticle(ctx, link))
-          .then(() => cb())
-          .catch(e => handleError(ctx, e, cb));
+          .catch(e => handleError(ctx, e, () => null));
         break;
     }
   }

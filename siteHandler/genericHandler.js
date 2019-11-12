@@ -22,13 +22,24 @@ async function genericHandler(url, domain) {
   switch (domain) {
     case "wsj.com":
       title = $("title", html).text();
-      body = "";
       $(".article-content > p", html).each((i, e) => {
         body += $(e).text() + "\n";
       });
       $(".paywall > p", html).each((i, e) => {
         body += $(e).text() + "\n";
       });
+      return await postToTelegraph(title, body, image);
+
+    case "nytimes.com":
+      title = $("title", html).text();
+      $("p", html).each((i, e) => {
+        body += $(e).text() + "\n";
+      });
+      try {
+        image = $("img.css-11cwn6f", html)[0].attribs.src;
+      } catch (e) {
+        // sometimes article has no image
+      }
       return await postToTelegraph(title, body, image);
   }
 }
