@@ -25,19 +25,19 @@ async function genericHandler(url, domain) {
       $(".article-content > p", html).each((i, e) => {
         body += $(e)
           .text()
-          .replace(/(\r\n|\n|\r)/g, "");
+          .replace(/(\r\n|\n|\r)/gm, "");
         body += "\n";
       });
       $(".paywall > p", html).each((i, e) => {
         body += $(e)
           .text()
-          .replace(/(\r\n|\n|\r)/g, "");
+          .replace(/(\r\n|\n|\r)/gm, "");
         body += "\n";
       });
       try {
         image = $("img", html)[0].attribs.src;
       } catch (e) {}
-      return await postToTelegraph(title, body, image);
+      break;
 
     case "nytimes.com":
       title = $("title", html).text();
@@ -49,8 +49,10 @@ async function genericHandler(url, domain) {
       } catch (e) {
         // sometimes article has no image
       }
-      return await postToTelegraph(title, body, image);
+      break;
   }
+  
+  return await postToTelegraph(title, body, image);
 }
 
 module.exports = genericHandler;
