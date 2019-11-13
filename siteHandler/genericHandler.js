@@ -46,12 +46,20 @@ async function genericHandler(url, domain) {
       });
       try {
         image = $("img.css-11cwn6f", html)[0].attribs.src;
-      } catch (e) {
-        // sometimes article has no image
-      }
+      } catch (e) {}
+      break;
+
+    case "wired.com":
+      title = $("h1", html).text();
+      $(".article__body > p", html).each((i, e) => {
+        body += $(e).text() + "\n";
+      });
+      try {
+        image = $("source", html)[0].attribs.srcset;
+      } catch (e) {}
       break;
   }
-  
+
   return await postToTelegraph(title, body, image);
 }
 
