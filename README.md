@@ -3,7 +3,7 @@ Telegram bot for reading paywalled articles.
 
 [@PremiumReaderBot](https://t.me/PremiumReaderBot)
 
-[Updated list of supported sites](https://github.com/nelsontky/PremiumReaderBot/blob/instant-view/supportedSites.js)
+[Updated list of supported sites](https://github.com/nelsontky/PremiumReaderBot/blob/master/supportedSites.js)
 
 ## Supported sites
 1. straitstimes.com
