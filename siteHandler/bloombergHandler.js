@@ -3,9 +3,9 @@ const puppeteer = require("puppeteer");
 
 const postToTelegraph = require("../utils/postToTelegraph");
 
-async function bloombergTest(url) {
+async function bloombergHandler(url) {
   const browser = await puppeteer.launch({
-    headless: !true,
+    headless: true,
     defaultViewport: { height: 736, width: 414 },
     args: ["--no-sandbox"],
     userDataDir: "./bloomberg_data"
@@ -28,7 +28,21 @@ async function bloombergTest(url) {
     } catch (e) {}
 
     const content = await page.content();
-    console.log(content);
+
+    const title = $("title", content).text();
+
+    let body = "";
+    $("div.fence-body", content).each((i, e) => {
+      body += $(e).text();
+    });
+
+    let image = "";
+    try {
+      // Some articles do not have images
+      image = $(".lazy-img__image", content)[0].attribs.src;
+    } catch (e) {}
+
+    return await postToTelegraph(title, body, image);
   } catch (e) {
     throw e;
   } finally {
@@ -36,5 +50,4 @@ async function bloombergTest(url) {
   }
 }
 
-const url = "https://www.bloomberg.com/news/articles/2019-11-15/justice-minister-attacked-elderly-worker-dies-hong-kong-update?srnd=premium-asia";
-bloombergTest(url);
+module.exports = bloombergHandler;

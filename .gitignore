@@ -67,10 +67,8 @@ typings/
 
 .env
 
-# credentials directory
-creds/
-
 st_data/
+bloomberg_data/
 
 article.pdf
 error.pdf

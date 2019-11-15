@@ -11,6 +11,7 @@ const {
   straitsTimesHandler,
   straitsTimesFromDb
 } = require("./siteHandler/straitsTimesHandler");
+const bloombergHandler = require("./siteHandler/bloombergHandler");
 const genericHandler = require("./siteHandler/genericHandler");
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
@@ -101,6 +102,15 @@ bot.hears(/\S+/, async ctx => {
             }
           })
           .catch(e => handleError(ctx, e, () => null));
+        break;
+
+      case "bloomberg.com":
+        jobQueue.push(cb => {
+          bloombergHandler(url)
+            .then(link => sendArticle(ctx, link))
+            .then(() => cb())
+            .catch(e => handleError(ctx, e, cb));
+        });
         break;
 
       default:
