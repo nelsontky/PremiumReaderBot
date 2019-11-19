@@ -22,8 +22,8 @@ function handleError(ctx, e, cb) {
       `Error, please try again. \nDetails: \n\`\`\`${e}\`\`\``,
       Extra.inReplyTo(ctx.update.message.message_id)
     )
-    .catch(() => handleBlocked());
-  ctx.replyWithMarkdown(helpMessage).catch(() => handleBlocked());
+    .catch(e => handleBlocked(e));
+  ctx.replyWithMarkdown(helpMessage).catch(e => handleBlocked(e));
   cb();
 }
 
@@ -37,11 +37,11 @@ function sendArticle(ctx, link) {
         reply_to_message_id: ctx.update.message.message_id
       }
     )
-    .catch(() => handleBlocked());
+    .catch(e => handleBlocked(e));
 }
 
-function handleBlocked() {
-  console.log("Blocked by user");
+function handleBlocked(e) {
+  // console.log(e);
 }
 
 // One task executes at once
@@ -50,10 +50,10 @@ jobQueue.autostart = true;
 jobQueue.concurrency = 1;
 
 bot.command("start", ctx =>
-  ctx.replyWithMarkdown(helpMessage).catch(() => handleBlocked())
+  ctx.replyWithMarkdown(helpMessage).catch(e => handleBlocked(e))
 );
 bot.command("help", ctx =>
-  ctx.replyWithMarkdown(helpMessage).catch(() => handleBlocked())
+  ctx.replyWithMarkdown(helpMessage).catch(e => handleBlocked(e))
 );
 
 bot.hears(/\S+/, async ctx => {
@@ -63,7 +63,7 @@ bot.hears(/\S+/, async ctx => {
     ctx
       .reply("Input is not a valid URL!")
       .then(() =>
-        ctx.replyWithMarkdown(helpMessage).catch(() => handleBlocked())
+        ctx.replyWithMarkdown(helpMessage).catch(e => handleBlocked(e))
       );
   } else {
     const domain = urlTools.getDomain(url);
@@ -72,7 +72,7 @@ bot.hears(/\S+/, async ctx => {
       ctx
         .reply("Website not supported")
         .then(() =>
-          ctx.replyWithMarkdown(helpMessage).catch(() => handleBlocked())
+          ctx.replyWithMarkdown(helpMessage).catch(e => handleBlocked(e))
         );
       return;
     }
@@ -83,7 +83,7 @@ bot.hears(/\S+/, async ctx => {
         "Wait a while ah loading... ...",
         Extra.inReplyTo(ctx.update.message.message_id)
       )
-      .catch(e => handleBlocked());
+      .catch(e => handleBlocked(e));
 
     switch (domain) {
       case "straitstimes.com":
@@ -111,6 +111,13 @@ bot.hears(/\S+/, async ctx => {
             .then(() => cb())
             .catch(e => handleError(ctx, e, cb));
         });
+        break;
+
+      case "wsj.com":
+        const ampUrl = "https://www.wsj.com/amp" + urlTools.getAfterDomain(url);
+        genericHandler(ampUrl, domain)
+          .then(link => sendArticle(ctx, link))
+          .catch(e => handleError(ctx, e, () => null));
         break;
 
       default:

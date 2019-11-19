@@ -22,7 +22,7 @@ async function genericHandler(url, domain) {
   switch (domain) {
     case "wsj.com":
       title = $("title", html).text();
-      $(".article-content > p", html).each((i, e) => {
+      $("div[amp-access = 'access'] > p", html).each((i, e) => {
         body += $(e)
           .text()
           .replace(/(\r\n|\n|\r)/gm, "");
@@ -34,9 +34,11 @@ async function genericHandler(url, domain) {
           .replace(/(\r\n|\n|\r)/gm, "");
         body += "\n";
       });
-      try {
-        image = $("img", html)[0].attribs.src;
-      } catch (e) {}
+      
+      // Lazy to implement images for now
+      // try {
+      //   image = $("img", html)[0].attribs.src;
+      // } catch (e) {}
       break;
 
     case "nytimes.com":
@@ -59,7 +61,6 @@ async function genericHandler(url, domain) {
       } catch (e) {}
       break;
   }
-
   return await postToTelegraph(title, body, image);
 }
 
