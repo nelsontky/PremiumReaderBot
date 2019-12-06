@@ -104,15 +104,6 @@ bot.hears(/\S+/, async ctx => {
           .catch(e => handleError(ctx, e, () => null));
         break;
 
-      case "bloomberg.com":
-        jobQueue.push(cb => {
-          bloombergHandler(url)
-            .then(link => sendArticle(ctx, link))
-            .then(() => cb())
-            .catch(e => handleError(ctx, e, cb));
-        });
-        break;
-
       case "wsj.com":
         const ampUrl = "https://www.wsj.com/amp" + urlTools.getAfterDomain(url);
         genericHandler(ampUrl, domain)

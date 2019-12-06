@@ -2,8 +2,7 @@ let sites = [
   "straitstimes.com",
   "wsj.com",
   "nytimes.com",
-  "wired.com",
-  "bloomberg.com"
+  "wired.com"
 ];
 
 sites.sort((a, b) => a.localeCompare(b));
