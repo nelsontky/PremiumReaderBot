@@ -15,7 +15,7 @@ const LOGIN_BUTTON = "#btnLogin";
 
 async function loginSt() {
   const browser = await puppeteer.launch({
-    headless: !true,
+    headless: true,
     defaultViewport: { height: 720, width: 1280 },
     userDataDir: "./st_data"
   });
@@ -50,6 +50,8 @@ async function loginSt() {
     console.log("LOGIN SUCCESSFUL");
   } catch (e) {
     console.log(e);
+  } finally {
+    browser.close();
   }
 }
 
