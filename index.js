@@ -11,7 +11,6 @@ const {
   straitsTimesHandler,
   straitsTimesFromDb
 } = require("./siteHandler/straitsTimesHandler");
-const bloombergHandler = require("./siteHandler/bloombergHandler");
 const genericHandler = require("./siteHandler/genericHandler");
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
