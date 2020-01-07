@@ -31,17 +31,16 @@ async function straitsTimesHandler(url, db) {
     );
 
     try {
-      await Promise.all([
-        page.waitForNavigation({ waitUntil: "networkidle2" }),
-        page.goto(url)
-      ]);
+      await page.goto(url, { waitUntil: "networkidle2" });
     } catch (e) {}
+
+    await page.waitFor(3000)
 
     // Try to logout from other browsers if present
     try {
       await Promise.all([
-        await page.click(logoutOtherBrowser),
-        await page.waitFor(3000)
+        page.waitFor(3000),
+        page.click(logoutOtherBrowser)
       ]);
     } catch (e) {}
 
