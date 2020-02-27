@@ -67,12 +67,9 @@ typings/
 
 .env
 
-st_data/
-bloomberg_data/
+/secrets
 
 article.pdf
 error.pdf
 nohup.out
-utils/telegraphAccess.js
-utils/st.json
-utils/stCreds.js
+*.html
