@@ -18,7 +18,7 @@ async function siteHandler(url, domain) {
 
   switch (domain) {
     case "wsj.com":
-      domNode = $("div[amp-access = 'access']", html)[0];
+      domNode = $("div[amp-access='access']", html)[0];
       break;
 
     case "nytimes.com":
