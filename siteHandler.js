@@ -1,7 +1,8 @@
 const $ = require("cheerio");
 const axios = require("axios").default;
 const postToTelegraph = require("./utils/postToTelegraph");
-const headers = require("./secrets/headers.json");
+let headers = require("./secrets/headers.json");
+const updateStCookies = require("./utils/updateStCookies");
 
 async function siteHandler(url, domain) {
   const res =
@@ -11,9 +12,9 @@ async function siteHandler(url, domain) {
       ? await axios.get(url, { headers: headers.st })
       : await axios.get(url, { headers: headers.generic });
 
-  const html = res.data;
+  let html = res.data;
 
-  let title = $("title", html).text();
+  const title = $("title", html).text();
   let domNode;
 
   switch (domain) {
@@ -34,9 +35,21 @@ async function siteHandler(url, domain) {
       break;
 
     case "straitstimes.com":
+      if (
+        html.includes(
+          `<h4 class="paywall-header">Enjoy unlimited access to ST's best work</h4>`
+        )
+      ) {
+        // Run when logged out of ST, put into another function soon? :)
+        await updateStCookies();
+        headers = require("./secrets/headers.json");
+        html = (await axios.get(url, { headers: headers.st })).data;
+      }
+
       domNode = $("div[class='col-md-8 ']", html)[0];
       break;
   }
+  
   return await postToTelegraph(title, domNode);
 }
 
