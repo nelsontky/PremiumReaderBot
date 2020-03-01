@@ -21,11 +21,9 @@ function isTimeStamp(domNode) {
   );
 }
 
-function isAuthorName(domNode) {
+function isAuthorDetails(domNode) {
   return (
-    domNode.attribs != undefined &&
-    (domNode.attribs.class === "author-field author-name" ||
-      domNode.attribs.class === "author-field author-email")
+    domNode.attribs != undefined && domNode.attribs.class.includes("author-")
   );
 }
 
@@ -37,7 +35,7 @@ function domToNode(domNode) {
     domNode.type === "comment" ||
     isSocialMediaButtons(domNode) ||
     isTimeStamp(domNode) ||
-    isAuthorName(domNode)
+    isAuthorDetials(domNode)
   ) {
     return "";
   }
