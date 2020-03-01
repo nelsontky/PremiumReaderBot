@@ -76,7 +76,7 @@ async function stHandler(url) {
     )
   ) {
     await updateStCookies();
-    headers = require("./secrets/headers.json").st;
+    headers = require("../secrets/headers.json").st;
     html = (await axios.get(url, { headers })).data;
   }
 
