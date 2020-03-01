@@ -1,20 +1,16 @@
 const $ = require("cheerio");
 const axios = require("axios").default;
 const postToTelegraph = require("./utils/postToTelegraph");
-const updateStCookies = require("./utils/updateStCookies");
+const headers = require("./secrets/headers.json");
 
 const nytimesHandler = require("./siteHandlers/nytimesHandler");
 const stHandler = require("./siteHandlers/stHandler");
 
-let headers = require("./secrets/headers.json");
-
 async function generateArticle(url, domain) {
   if (domain === "nytimes.com") {
     return nytimesHandler(url);
-
   } else if (domain === "straitstimes.com") {
     return stHandler(url);
-    
   } else {
     const res =
       domain === "bloomberg.com"
