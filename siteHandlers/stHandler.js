@@ -23,7 +23,9 @@ function isTimeStamp(domNode) {
 
 function isAuthorDetails(domNode) {
   return (
-    domNode.attribs != undefined && domNode.attribs.class.includes("author-")
+    domNode.attribs != undefined &&
+    domNode.attribs.class != undefined &&
+    domNode.attribs.class.includes("author-")
   );
 }
 
