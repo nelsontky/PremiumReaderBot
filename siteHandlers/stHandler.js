@@ -29,45 +29,6 @@ function isAuthorDetails(domNode) {
   );
 }
 
-function domToNode(domNode) {
-  if (
-    domNode.name === "script" ||
-    domNode.name === "aside" ||
-    domNode.name === "style" ||
-    domNode.type === "comment" ||
-    isSocialMediaButtons(domNode) ||
-    isTimeStamp(domNode) ||
-    isAuthorDetails(domNode)
-  ) {
-    return "";
-  }
-  if (domNode.children == undefined) {
-    return domNode.data.replace(/(\r\n|\n|\r|Advertisement)/gm, "");
-  }
-
-  let nodeElement = {};
-  nodeElement.tag =
-    domNode.name.toLowerCase() === "amp-img" // WSJ images
-      ? "img"
-      : domNode.name.toLowerCase();
-
-  for (let attrib in domNode.attribs) {
-    if (attrib == "src") {
-      if (!nodeElement.attrs) {
-        nodeElement.attrs = {};
-      }
-      nodeElement.attrs[attrib] = domNode.attribs[attrib];
-    }
-  }
-
-  nodeElement.children = [];
-  for (let child of domNode.children) {
-    nodeElement.children.push(domToNode(child));
-  }
-
-  return nodeElement;
-}
-
 async function stHandler(url) {
   const res = await axios.get(url, { headers });
   let html = res.data;
@@ -85,7 +46,11 @@ async function stHandler(url) {
   const title = $("title", html).text();
   const domNode = $("div[class='col-md-8 ']", html)[0];
 
-  return await postToTelegraph(title, domNode, domToNode);
+  return await postToTelegraph(title, domNode, [
+    isSocialMediaButtons,
+    isTimeStamp,
+    isAuthorDetails
+  ]);
 }
 
 module.exports = stHandler;
