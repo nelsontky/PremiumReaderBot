@@ -35,7 +35,7 @@ function domToNode(domNode) {
     domNode.type === "comment" ||
     isSocialMediaButtons(domNode) ||
     isTimeStamp(domNode) ||
-    isAuthorDetials(domNode)
+    isAuthorDetails(domNode)
   ) {
     return "";
   }
