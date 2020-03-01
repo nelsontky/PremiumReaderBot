@@ -15,7 +15,9 @@ function isSocialMediaButtons(domNode) {
 
 function isTimeStamp(domNode) {
   return (
-    domNode.attribs != undefined && domNode.attribs.class === "story-postdate"
+    domNode.attribs != undefined &&
+    (domNode.attribs.class === "story-postdate" ||
+      domNode.attribs.class === "label-inline")
   );
 }
 
