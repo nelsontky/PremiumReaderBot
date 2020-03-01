@@ -1,11 +1,12 @@
 const axios = require("axios").default;
-const id = require("../secrets/telegraphAccess.js");
+const token = require("../secrets/telegraphToken.json").token;
 
 function domToNode(domNode) {
   if (
     domNode.name === "script" ||
     domNode.name === "aside" ||
-    domNode.name === "style"
+    domNode.name === "style" ||
+    domNode.type === "comment"
   ) {
     return "";
   }
@@ -36,11 +37,11 @@ function domToNode(domNode) {
   return nodeElement;
 }
 
-async function postToTelegraph(title, domNode) {
+async function postToTelegraph(title, domNode, domToNodeFunc = domToNode) {
   const params = new URLSearchParams();
-  params.append("access_token", id);
+  params.append("access_token", token);
   params.append("title", title);
-  params.append("content", JSON.stringify([domToNode(domNode)]));
+  params.append("content", JSON.stringify([domToNodeFunc(domNode)]));
 
   const response = await axios.post(
     "https://api.telegra.ph/createPage",

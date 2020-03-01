@@ -1,6 +1,6 @@
 const $ = require("cheerio");
 const axios = require("axios").default;
-const headers = require("../secrets/headers.json").generic;
+const headers = require("../secrets/headers.json").st;
 const postToTelegraph = require("../utils/postToTelegraph");
 
 function isSocialMediaButtons(domNode) {
@@ -64,7 +64,7 @@ function domToNode(domNode) {
   return nodeElement;
 }
 
-async function main(url) {
+async function stHandler(url) {
   const res = await axios.get(url, { headers });
   const html = res.data;
   const title = $("title", html).text();
@@ -73,6 +73,4 @@ async function main(url) {
   return await postToTelegraph(title, domNode, domToNode);
 }
 
-main(
-  "https://www.straitstimes.com/singapore/coronavirus-four-new-cases-confirmed-all-linked-to-wizlearn-technologies-cluster-three"
-).then(link => console.log(link));
+module.exports = stHandler;

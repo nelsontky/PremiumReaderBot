@@ -1,6 +1,6 @@
 const request = require("request");
 const fs = require("fs");
-const creds = require("../secrets/creds.json");
+const creds = require("../secrets/stCreds.json");
 const headers = require("../secrets/headers.json");
 
 const options = {

@@ -1,14 +1,12 @@
-require("dotenv").config();
-
 const Telegraf = require("telegraf");
 const Extra = require("telegraf/extra");
 const supportedSites = require("./supportedSites");
 const urlTools = require("./utils/urlTools");
 const helpMessage = require("./utils/helpMessage");
+const generateArticle = require("./generateArticle");
+const botToken = require("./secrets/botToken.json").botToken;
 
-const siteHandler = require("./siteHandler");
-
-const bot = new Telegraf(process.env.BOT_TOKEN);
+const bot = new Telegraf(botToken);
 
 function handleError(ctx, e) {
   ctx
@@ -67,13 +65,13 @@ bot.hears(/\S+/, async ctx => {
     switch (domain) {
       case "wsj.com":
         const ampUrl = "https://www.wsj.com/amp" + urlTools.getAfterDomain(url);
-        siteHandler(ampUrl, domain)
+        generateArticle(ampUrl, domain)
           .then(link => sendArticle(ctx, link))
           .catch(e => handleError(ctx, e));
         break;
 
       default:
-        siteHandler(url, domain)
+        generateArticle(url, domain)
           .then(link => sendArticle(ctx, link))
           .catch(e => handleError(ctx, e));
         break;
