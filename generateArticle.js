@@ -27,10 +27,6 @@ async function generateArticle(url, domain) {
         domNode = $("div[amp-access='access']", html)[0];
         break;
 
-      case "nytimes.com":
-        domNode = nytimesHandler(html);
-        break;
-
       case "wired.com":
         domNode = $(".article__chunks", html)[0];
         break;
