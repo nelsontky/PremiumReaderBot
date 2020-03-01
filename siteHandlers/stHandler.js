@@ -1,7 +1,7 @@
 const $ = require("cheerio");
 const axios = require("axios").default;
 const postToTelegraph = require("../utils/postToTelegraph");
-const updateStCookies = require("./utils/updateStCookies");
+const updateStCookies = require("../utils/updateStCookies");
 
 let headers = require("../secrets/headers.json").st;
 
