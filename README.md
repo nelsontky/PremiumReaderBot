@@ -1,15 +1,13 @@
-# Premium Reader Bot
+# [DISCONTINUED] Premium Reader Bot
 Telegram bot for reading paywalled articles.
 
-[@PremiumReaderBot](https://t.me/PremiumReaderBot)
-
-[Updated list of supported sites](https://github.com/nelsontky/PremiumReaderBot/blob/master/supportedSites.js)
+~~[@PremiumReaderBot](https://t.me/PremiumReaderBot)~~
 
 ## Supported sites
-1. straitstimes.com
 1. wsj.com
 1. nytimes.com
 1. wired.com
 1. bloomberg.com
 
-The main point of this bot was to facilitate the reading of paywalled Straits Times articles for free, without a SPH subscription. Thus, the other sites listed aside from Straits Times are afterthoughts that may not work as well
+## Demo
+![](https://media.giphy.com/media/LoIzgyR75NrPOVEa2C/giphy.gif)
